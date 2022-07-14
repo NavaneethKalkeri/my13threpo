@@ -1,0 +1,48 @@
+pipeline{
+agent none 
+stages{
+stage(compile){
+agent {label 'Win_machineLabel'}
+tools{
+jdk 'JAVA_HOME1'
+maven 'MAVEN_HOME1'}
+steps{
+git credentialsId: '17bdeba1-936b-4e51-9098-5701ccb88bdd', url: 'https://github.com/NavaneethKalkeri/my13threpo.git'
+bat 'mvn compile'
+}
+}
+stage(codereview){
+agent {label 'Win_machineLabel'}
+tools{
+jdk 'JAVA_HOME1'
+maven 'MAVEN_HOME1'}
+steps{
+git credentialsId: '17bdeba1-936b-4e51-9098-5701ccb88bdd', url: 'https://github.com/NavaneethKalkeri/my13threpo.git'
+bat 'mvn pmd:pmd'
+}
+}
+stage(test){
+agent {label 'linuxslave'}
+tools{
+jdk 'JAVA_HOME3'
+maven 'MAVEN_HOME3'
+}
+steps{
+git credentialsId: 'aa281686-b7f2-4591-9421-a36a7de26d72', url: 'https://github.com/NavaneethKalkeri/my13threpo.git'
+sh 'mvn test'
+
+}
+}
+stage(package){
+agent {label 'linuxslave'}
+tools{
+jdk 'JAVA_HOME3'
+maven 'MAVEN_HOME3'
+}
+steps{
+git credentialsId: 'aa281686-b7f2-4591-9421-a36a7de26d72', url: 'https://github.com/NavaneethKalkeri/my13threpo.git'
+sh 'mvn package'
+}
+}
+}
+}
